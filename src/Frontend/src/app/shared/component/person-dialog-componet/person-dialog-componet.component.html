@@ -1,0 +1,174 @@
+<!-- <p-panel header="Seleccione un Titular haciendo doble click"> -->
+<p-table
+  dataKey="id"
+  [lazy]="true"
+  [rows]="10"
+  class="table"
+  [paginator]="true"
+  [value]="lsPersona"
+  selectionMode="single"
+  [totalRecords]="totalRows"
+  scrollDirection="vertical"
+  [showCurrentPageReport]="true"
+  [(selection)]="selectionPerson"
+  (onLazyLoad)="loadPersonaLazy($event)"
+  currentPageReportTemplate="{last} de {totalRecords}"
+>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th scope="col" [hidden]="true">Id</th>
+      <th scope="col w-min-150">
+        <div class="col-12 mb-1">
+          <div
+            class="text-center header flex justify-content-center align-items-center"
+          >
+            Identificación&nbsp; &nbsp;
+            <p-sortIcon (click)="sortByColumns('identitySort')" field="code">
+            </p-sortIcon>
+          </div>
+        </div>
+        <div
+          class="col-12 d-flex align-items-center m-0"
+          [formGroup]="filtersForm"
+        >
+          <p-columnFilter
+            field="DocumentoIdentidad"
+            type="text"
+            matchMode="contains"
+            [showMenu]="false"
+            [showClearButton]="false"
+            [showButtons]="false"
+            [showAddButton]="false"
+          >
+            <ng-template
+              pTemplate="filter"
+              let-value
+              let-filter="filterCallback"
+            >
+              <input type="text" pInputText formControlName="identity" />
+            </ng-template>
+          </p-columnFilter>
+          @if(filtersForm.get('identity')?.value){
+          <button class="button-clean" (click)="clearFilter('identity')">
+            <i
+              pTooltip="Limpiar Filtro"
+              tooltipPosition="top"
+              class="ps-2 pointer bi bi-funnel-fill"
+            ></i>
+          </button>
+          }
+        </div>
+      </th>
+      <th scope="col w-min-150">
+        <div class="col-12 mb-1">
+          <div
+            class="text-center header flex justify-content-center align-items-center"
+          >
+            Nombre&nbsp; &nbsp;
+            <p-sortIcon
+              (click)="sortByColumns('nameSort')"
+              field="code"
+            ></p-sortIcon>
+          </div>
+        </div>
+        <div class="col-12 d-flex align-items-center" [formGroup]="filtersForm">
+          <p-columnFilter
+            field="Nombre"
+            matchMode="contains"
+            [showMenu]="false"
+            [showClearButton]="false"
+            [showButtons]="false"
+            [showAddButton]="false"
+          >
+            <ng-template
+              pTemplate="filter"
+              let-value
+              let-filter="filterCallback"
+            >
+              <input type="text" pInputText formControlName="name" />
+            </ng-template>
+          </p-columnFilter>
+          @if(filtersForm.get('name')?.value){
+          <button class="button-clean" (click)="clearFilter('name')">
+            <i
+              pTooltip="Limpiar Filtro"
+              tooltipPosition="top"
+              class="ps-2 pointer bi bi-funnel-fill"
+            ></i>
+          </button>
+          }
+        </div>
+      </th>
+      <th scope="col">
+        <div class="col-12 w-min-150 mb-1">
+          <div
+            class="text-center header flex justify-content-center align-items-center"
+          >
+            Apellido<p-sortIcon
+              (click)="sortByColumns('lastNameSort')"
+              field="code"
+            ></p-sortIcon>
+          </div>
+          <div
+            class="col-12 d-flex align-items-center"
+            [formGroup]="filtersForm"
+          >
+            <p-columnFilter
+              type="text"
+              field="Apellido"
+              matchMode="contains"
+              [showMenu]="false"
+              [showClearButton]="false"
+              [showButtons]="false"
+              [showAddButton]="false"
+            >
+              <ng-template
+                pTemplate="filter"
+                let-value
+                let-filter="filterCallback"
+              >
+                <input type="text" pInputText formControlName="lastName" />
+              </ng-template>
+            </p-columnFilter>
+            @if(filtersForm.get('lastName')?.value){
+            <button class="button-clean" (click)="clearFilter('lastName')">
+              <i
+                pTooltip="Limpiar Filtro"
+                tooltipPosition="top"
+                class="ps-2 pointer bi bi-funnel-fill"
+              ></i>
+            </button>
+            }
+          </div>
+        </div>
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-dataPersona let-rowIndex="rowIndex">
+    <tr
+      [pSelectableRow]="dataPersona"
+      (dblclick)="onRowDblClick($event, dataPersona)"
+    >
+      <td [hidden]="true">
+        {{ dataPersona.Id }}
+      </td>
+      <td>
+        {{ dataPersona.identification }}
+      </td>
+      <td>
+        {{ dataPersona.firstName | uppercase }}
+        {{ dataPersona.secondName | uppercase }}
+      </td>
+      <td>
+        {{ dataPersona.lastName | uppercase }}
+        {{ dataPersona.lastName | uppercase }}
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="3">No existen registros.</td>
+    </tr>
+  </ng-template>
+</p-table>
+<!-- </p-panel> -->
