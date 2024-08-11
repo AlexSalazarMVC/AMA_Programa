@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace FundacionAMA.Domain.Entities;
 
-public partial class BrigadeVoluntareer: BaseEntity
+public partial class BrigadeVoluntareer: BaseEntity<int>
 {
     public int BrigadeId { get; set; }
 

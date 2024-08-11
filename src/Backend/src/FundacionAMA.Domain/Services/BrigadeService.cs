@@ -1,4 +1,10 @@
-﻿using System.Linq.Expressions;
+﻿using AutoMapper;
+using FundacionAMA.Domain.DTO.BrigadeVolunteer.Dto;
+using FundacionAMA.Domain.DTO.BrigadeVolunteer.FilterDto;
+using FundacionAMA.Domain.DTO.BrigadeVolunteer.Request;
+using FundacionAMA.Domain.Interfaces.Repositories;
+using Microsoft.IdentityModel.Tokens;
+using System.Linq.Expressions;
 using System.Net;
 
 namespace FundacionAMA.Domain.Services
@@ -7,11 +13,26 @@ namespace FundacionAMA.Domain.Services
     {
         private readonly IBrigadeRepository _brigadeRepository;
         private readonly ILogger<BrigadeService> _logger;
+        private readonly IMapper _mapper;
 
-        public BrigadeService(IBrigadeRepository brigadeRepository, ILogger<BrigadeService> logger)
+        //inicio
+        private readonly IVolunteerRepository _volunteerRepository;
+        private readonly IBrigadeVolunteerRepository _brigadeVolunteerRepository;
+        //fin
+
+
+        public BrigadeService(
+            IBrigadeRepository brigadeRepository, 
+            ILogger<BrigadeService> logger, 
+            IMapper mapper, 
+            IVolunteerRepository volunteerRepository,//añadido 
+            IBrigadeVolunteerRepository brigadeVolunteerRepository)//añadido
         {
             _brigadeRepository = brigadeRepository;
             _logger = logger;
+            _mapper = mapper;
+            _volunteerRepository = volunteerRepository;//añadido
+            _brigadeVolunteerRepository = brigadeVolunteerRepository;//añadido
         }
 
         public async Task<IOperationResult> Create(IOperationRequest<BrigadeRequest> entity)
@@ -20,6 +41,7 @@ namespace FundacionAMA.Domain.Services
             {
                 _logger.LogInformation("Creando brigada");
                 Brigade request = entity.Data.MapTo<Brigade>();
+
                 // Verificar si el registro ya existe
                 var exists = await _brigadeRepository.ExistsAscyn(b => b.Name == request.Name);
                 if (exists)
@@ -28,9 +50,36 @@ namespace FundacionAMA.Domain.Services
                     return new OperationResult(HttpStatusCode.Conflict, "El Registro ya Existe!, ¡Crea uno distinto!");
                 }
 
+                // Verificar si el campo nombre esta vacio o es nulo
+                if (request.Name.IsNullOrEmpty())
+                {
+                    _logger.LogWarning("¡Campos vacios!¡Todos los campos del formulario son requeridos!");
+                    return new OperationResult(HttpStatusCode.InternalServerError, "¡Campos vacios!¡Todos los campos del formulario son requeridos!");
+                }
+                // Guardar el registro en la entidad Brigade
                 await _brigadeRepository.InsertAsync(request);
                 await _brigadeRepository.SaveChangesAsync(entity);
-                _logger.LogInformation("Brigada creada con exito");
+                _logger.LogInformation("Brigada creada exitosamente");
+
+                ////desde aqui
+                // Verificar si el PersonId se encuentra en la entidad Volunteer
+                var volunteer = await _volunteerRepository.GetByIdAsync(request.PersonId);
+                if (volunteer != null)
+                {
+                    // Crear un nuevo registro en BrigadeVolunteer
+                    var brigadeVolunteer = new BrigadeVoluntareer
+                    {
+                        Id = 0,
+                        BrigadeId = request.Id,
+                        VolunteerId = volunteer.PersonId
+                    };
+
+                    await _brigadeVolunteerRepository.InsertAsync(brigadeVolunteer);
+                    await _brigadeVolunteerRepository.SaveChangesAsync();
+                    _logger.LogInformation("Registro en BrigadeVolunteer creado exitosamente");
+                }
+                ////hasta aqui
+
                 return new OperationResult(HttpStatusCode.Created, "Brigada creada exitosamente");
             }
             catch (Exception ex)
@@ -61,7 +110,8 @@ namespace FundacionAMA.Domain.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al eliminar brigada");
-                return await ex.ToResultAsync();
+              //return await ex.ToResultAsync();
+              return new OperationResult(HttpStatusCode.InternalServerError, "¡Esta Brigada tiene voluntarios asociados!¡Elimina los voluntarios asociados a la brigada e intenta de nuevo!\"");
             }
         }
 
@@ -165,27 +215,27 @@ namespace FundacionAMA.Domain.Services
             try
             {
                 _logger.LogInformation("Actualizando brigada");
-                Brigade? brigara = await _brigadeRepository.GetByIdAsync(id);
-                if (brigara == null)
+                Brigade? BrigadaExistente = await _brigadeRepository.GetByIdAsync(id);
+                if (BrigadaExistente == null)
                 {
-                    return new OperationResult(System.Net.HttpStatusCode.NotFound, "No se encontro la brigada");
+                    return new OperationResult(HttpStatusCode.NotFound, "No se encontro la brigada");
                 }
+                Brigade request = entity.Data.MapTo<Brigade>();
 
-                // Verificar si el nombre ya está en uso por otra brigada
-                var exists = await _brigadeRepository.ExistsAscyn(b => b.Name == entity.Data.Name && b.Id != id);
-                if (exists)
-                {
-                    _logger.LogWarning("El nombre de la brigada ya está en uso por otra brigada");
-                    return new OperationResult(HttpStatusCode.Conflict, "El nombre de la brigada ya está en uso por otra brigada. ¡Utiliza un nombre distinto!");
-                }
-                //Brigade request = entity.Data.MapTo<Brigade>(brigara);
-                //await _brigadeRepository.UpdateAsync(request);
-                brigara = brigara.MapTo<Brigade>(entity.Data);
-                await _brigadeRepository.UpdateAsync(brigara);
+                //var exists = await _brigadeRepository.ExistsAscyn(b => b.Name == request.Name && request.Id != id);
+                //if (exists)
+                //{
+                //    _logger.LogWarning("El registro ya existe en la tabla BrigadaVoluntario");
+                //    return new OperationResult(HttpStatusCode.Conflict, "");
+                //}
+
+
+                _mapper.Map(entity.Data, BrigadaExistente);
+                await _brigadeRepository.UpdateAsync(BrigadaExistente);
                 await _brigadeRepository.SaveChangesAsync();
 
                 _logger.LogInformation("Brigada actualizada con exito");
-                return new OperationResult(System.Net.HttpStatusCode.NoContent, "La brigada fue actualizada con exito");
+                return new OperationResult(HttpStatusCode.NoContent, "Brigada actualizada exitosamente");
             }
             catch (Exception ex)
             {
@@ -193,5 +243,7 @@ namespace FundacionAMA.Domain.Services
                 return await ex.ToResultAsync();
             }
         }
+
+        
     }
 }

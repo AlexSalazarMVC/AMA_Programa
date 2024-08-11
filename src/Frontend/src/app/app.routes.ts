@@ -6,7 +6,7 @@ import { MainComponent } from './module/layout/main/main.component';
 import { NotFoundComponent } from './module/home/not-found/not-found.component';
 import {authGuard} from './services/auth/auth.guard';
 import { PersonDialogComponet } from './shared/component/person-dialog-componet/person-dialog-componet.component';
-
+import { BrigadesVolunteerComponent } from './module/brigada/pages/Brigades-Volunteer/brigades-volunteer.component';
 const routes: Routes = [
   {
     path: '',
@@ -29,6 +29,7 @@ const routes: Routes = [
     loadChildren: () => import('./module/donaciones/donaciones.module').then((m) => m.DonacionesModule),
     canActivate: [authGuard]
   },
+ 
   {
     path: 'configuracion',
     component: MainComponent,

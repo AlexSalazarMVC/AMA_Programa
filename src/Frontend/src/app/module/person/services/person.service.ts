@@ -43,7 +43,4 @@ export class PersonService {
     this.createDonorSource.next();
   }
 
-  getVoluntarioCount(): Observable<Result> {
-    return this.http.get<Result>(`${this.apiUrl}/GetCountVolumtario`);
-  }
 }

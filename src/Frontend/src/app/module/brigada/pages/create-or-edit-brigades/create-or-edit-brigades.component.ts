@@ -8,8 +8,9 @@ import {
   OnChanges,
   SimpleChanges,
   OnDestroy,
+  ViewChild,
 } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators,FormBuilder } from '@angular/forms';
 import {
   ChangeItemDropdown,
   ConfigurationDropdownProp,
@@ -21,6 +22,9 @@ import { BrigadeForm } from '../../interfaces/brigade-form';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { BrigadeService } from '../../services/brigade.service';
 import { ConfSystemServiceService } from '../../../../data/conf-system-service.service';
+import { MessageService } from 'primeng/api';
+import { DropdownComponent } from '../../../../shared/component/dropdown-component/dropdown-component.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-create-or-edit-brigades',
@@ -32,9 +36,9 @@ export class CreateOrEditBrigadesComponent
 {
   personaConfig!: ConfigurationDropdownProp;
   lsPersona!: DynamicDataToDialog;
-
+  @ViewChild(DropdownComponent) dropdownComponent!: DropdownComponent;
   itemsPersona: ItemDropdown[] = [];
-  @Output() isUpdateListDetails = new EventEmitter<boolean>();
+  @Output() isUpdateListDetails = new EventEmitter<Boolean>();
 
   brigadeForm!: FormGroup;
   formData!: BrigadeForm;
@@ -49,10 +53,14 @@ export class CreateOrEditBrigadesComponent
     private formService: FormService,
     private brigadeService: BrigadeService,
     private configService: ConfSystemServiceService,
-
-    private cdr: ChangeDetectorRef
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder
   ) {
-    this.InitializeData();
+
+
+
+   // this.InitializeData();
   }
   ngOnDestroy(): void {
     if (this.ref) {
@@ -101,6 +109,7 @@ export class CreateOrEditBrigadesComponent
 
   ngOnInit(): void {
     this.InitializeData();
+    console.log("oninit create",this.isUpdateListDetails);
   }
   InitializeData() {
     this.update = this.config.data.update;
@@ -121,15 +130,27 @@ export class CreateOrEditBrigadesComponent
     if (this.update) {
       this.Updatebrigade();
       setTimeout(() => {
-        this.isUpdateListDetails.emit(true);
+        
         this.ref.close(this.brigadeForm.value);
+        this.isUpdateListDetails.emit(true);
+  console.log("inputdataupdate",this.isUpdateListDetails);
+
       }, 1000);
+     
     } else {
+      if (this.brigadeForm.invalid || this.dropdownComponent.formItemDropdownGroup.invalid) {
+        return;
+      }
+    
       this.Createbrigade();
       setTimeout(() => {
-        this.isUpdateListDetails.emit(true);
+       
         this.ref.close(this.brigadeForm.value);
+        this.isUpdateListDetails.emit(true);
+        console.log("inputdatacreate",this.isUpdateListDetails);
+
       }, 1000);
+     // this.isUpdateListDetails.emit(false);
     }
   }
 
@@ -138,9 +159,14 @@ export class CreateOrEditBrigadesComponent
       await this.brigadeService
         .createBrigade(this.brigadeForm.value)
         .toPromise();
+        console.log("createbolunbefore",this.isUpdateListDetails);
+        this.isUpdateListDetails.emit(true);
+        console.log("createbolun",this.isUpdateListDetails);
     } catch (error) {
-      // Handle the error
+
+
     }
+ 
   }
 
   async Updatebrigade() {
@@ -148,13 +174,32 @@ export class CreateOrEditBrigadesComponent
       await this.brigadeService
         .updateBrigade(this.brigadeForm.value)
         .toPromise();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Exito',
+          detail: 'Se han actualizado los datos',
+          life: 3000,
+        });
+      this.isUpdateListDetails.emit(true);
+      console.log("update",this.isUpdateListDetails);
       // The HTTP request has completed
     } catch (error) {
+      console.log(error);
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Error',
+        detail: 'No se permiten duplicados',
+        life: 3000,
+      });
+
+
+
       // Handle the error
     }
   }
   closeDialog() {
     this.ref.close();
+   // this.isUpdateListDetails.emit(true);
   }
 
   onIdentificationTypeChange(value: any) {
@@ -171,6 +216,7 @@ export class CreateOrEditBrigadesComponent
       start: new Date(),
       companyId: 0,
       personId: 0,
+    
     };
     this.brigadeForm = this.formService.createFormGroup<BrigadeForm>(
       this.formData
@@ -185,7 +231,7 @@ export class CreateOrEditBrigadesComponent
 
     this.brigadeForm
       .get('personId')
-      ?.setValidators([Validators.required, Validators.min(0)]);
+      ?.setValidators([Validators.required]);
   }
 
   valorDate(field: string) {

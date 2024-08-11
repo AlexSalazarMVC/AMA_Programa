@@ -17,7 +17,7 @@ import { ErrorDisplayComponent } from './component/ConfigSystem/error-display/er
 import { ToolsService } from '../services/tools.service';
 import { TagModule } from 'primeng/tag';
 import { BrigadeDialogComponent } from './component/brigade-dialog/brigade-dialog.component';
-
+import { CreateBrigVolunterComponent } from '../module/brigada/pages/Brigades-Volunteer/create-brig-volunter/create-brig-volunter.component';
 @NgModule({
   declarations: [
     DropdownComponent,
@@ -29,6 +29,7 @@ import { BrigadeDialogComponent } from './component/brigade-dialog/brigade-dialo
     BrigadeDialogComponent,
     SpinnerComponent,
     PersonDialogComponet,
+    CreateBrigVolunterComponent
   ],
   imports: [CommonModule, ReactiveFormsModule, PrimengModule],
   exports: [

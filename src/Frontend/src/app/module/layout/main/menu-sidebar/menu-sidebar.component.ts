@@ -51,11 +51,31 @@ export const MENU : IMenuItem[] = [
     iconClasses: 'fas fa-home',
     path: ['/']
   },
+ 
+
   {
-    name: 'Brigadas',
+    name: 'Gestion Brigadas',
     iconClasses: 'fas fa-users',
-    path: ['/brigate/index']
+    children: [
+      {
+        name: 'Brigadas',
+        iconClasses: 'fas fa-users',
+        path: ['/brigate/index']
+      },
+      {
+        name: 'Brigada Voluntario',
+        iconClasses: 'fas fa-users',
+        path: ['/brigate/voluntario']
+      },
+      
+     
+    ]
   },
+
+
+
+
+  ////////////////
   {
     name: 'Donaciones',
     iconClasses: 'fas fa-donate',

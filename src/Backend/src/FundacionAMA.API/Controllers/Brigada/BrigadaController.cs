@@ -3,13 +3,11 @@ using FundacionAMA.Domain.DTO.Brigade.Dto;
 using FundacionAMA.Domain.DTO.Brigade.FilterDto;
 using FundacionAMA.Domain.DTO.Brigade.Request;
 using FundacionAMA.Domain.Interfaces.Controller.Brigade;
-using FundacionAMA.Domain.Shared.Entities.Operation;
 using FundacionAMA.Domain.Shared.Extensions.Bussines;
 using FundacionAMA.Domain.Shared.Interfaces.Operations;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace FundacionAMA.API.Controllers.Brigada
 {
@@ -18,7 +16,7 @@ namespace FundacionAMA.API.Controllers.Brigada
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class BrigadaController : ControllerBase, IBrigadeController
     {
         private readonly IBrigadeAppService _brigadeAppService;
@@ -59,6 +57,7 @@ namespace FundacionAMA.API.Controllers.Brigada
         {
             IOperationResult Result = await _brigadeAppService.Delete(id.ToRequest(this));
             return StatusCode(Result);
+
         }
         /// <summary>
         /// obtener todas las brigadas paginado
@@ -96,9 +95,7 @@ namespace FundacionAMA.API.Controllers.Brigada
         {
             try
             {
-                IOperationResultList<BrigadeDto> Result = await _brigadeAppService.GetAll(new BrigadeFilter());
-                var count_ = await _brigadeAppService.GetCount();
-                var count = new OperationResult<int>(HttpStatusCode.OK, result: Result.Result.Count());
+                var count = await _brigadeAppService.GetCount();
                 return Ok(count);
             }
             catch (Exception ex)

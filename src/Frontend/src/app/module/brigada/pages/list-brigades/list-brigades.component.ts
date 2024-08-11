@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   Input,
   OnChanges,
@@ -13,6 +14,8 @@ import { BrigadeDto } from '../../interfaces/brigade-dto';
 import { BrigadeService } from '../../services/brigade.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Sort } from '../../../../core/interfaces/sort';
+import { Http2ServerResponse } from 'http2';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-list-brigades',
@@ -23,7 +26,7 @@ export class ListBrigadesComponent implements OnInit, OnChanges {
   @Input() queryRequest: BrigadeFilter | undefined;
   @Input() isUpdateListDetails: boolean = false;
   @Input() searchFilter: any = {};
-
+  
   DeleteData(brigade: BrigadeDto, event: Event) {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
@@ -37,11 +40,12 @@ export class ListBrigadesComponent implements OnInit, OnChanges {
       acceptLabel: 'Confirmar',
       rejectLabel: 'Cancelar',
       accept: () => {
-        brigade.status = 'E'
-        this.totalRows -= 1;
-        this.deleteBrigade(brigade.id);
+        
+        this.deleteBrigade(brigade.id, brigade);
+      
       },
       reject: () => {
+
         this.messageService.add({
           severity: 'warn',
           summary: '',
@@ -61,11 +65,18 @@ export class ListBrigadesComponent implements OnInit, OnChanges {
   NavigateView(brigade: any) {
     this.dialogService.open(CreateOrEditBrigadesComponent, {
       header: 'Ver Brigada',
-      width: '85%',
+      width: 'auto',
       height: 'auto',
       data: { update: true, brigade: brigade, view: true },
+      contentStyle: { 'min-height': '500px', 'min-width': '500px' },
       baseZIndex: 10000,
+    }).onClose.subscribe((result) => {
+      if (result) {
+        this.isUpdateListDetails = true;
+        console.log("listbrigada navigate",this.isUpdateListDetails);
+      }
     });
+  
   }
   loading: boolean = false;
   listaBrigadeas: BrigadeDto[] = [];
@@ -75,32 +86,53 @@ export class ListBrigadesComponent implements OnInit, OnChanges {
     private dialogService: DialogService,
     private brigadeService: BrigadeService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private cdr: ChangeDetectorRef
   ) {}
   ngOnInit(): void {
+
+    
     this.getBrigade();
+ 
   }
 
   private handleUpdateListDetails() {
-    this.getBrigade(); // Llamada a la función que obtiene las brigadas
+   
+    this.getBrigade(); 
+    this.cdr.detectChanges();
+    // Llamada a la función que obtiene las brigadas
   }
   ngOnChanges(changes: SimpleChanges): void {
+    
+
     for (let change in changes) {
+
+      console.log('Changes detected:', changes);
+
+    
       if (change === 'isUpdateListDetails') {
         if (this.isUpdateListDetails) {
           this.handleUpdateListDetails();
+        
         }
       }
       if (change === 'searchFilter') {
         if (changes[change].currentValue) {
+          // console.log(changes[change].currentValue)
           this.listaBrigadeas = changes[change].currentValue.listabeneficiarios;
           this.totalRows = changes[change].currentValue.totalRows;
           this.loading = changes[change].currentValue.loading;
         }
       }
+
+      
     }
+
+
+
   }
   private getBrigade() {
+    this.loading = true;
     this.brigadeFiler = {
       offset: 0,
       take: 10,
@@ -113,16 +145,17 @@ export class ListBrigadesComponent implements OnInit, OnChanges {
         this.totalRows = result.length;
         this.loading = false;
       },
-      (error) => {}
+      (error) => {   this.loading = false;}
     );
   }
   NavigateUpdate(brigade: BrigadeDto) {
     this.dialogService
       .open(CreateOrEditBrigadesComponent, {
         header: 'Actualizar Brigada',
-        width: '85%',
+        width: 'auto',
         height: 'auto',
         data: { update: true, brigade: brigade },
+        contentStyle: { 'min-height': '500px', 'min-width': '500px' },
         baseZIndex: 10000,
       })
 
@@ -142,7 +175,7 @@ export class ListBrigadesComponent implements OnInit, OnChanges {
       let sortArray: Sort[] = [];
       let sortObj: Sort = {
         selector: sortCol,
-        desc: sortColOrder !== 1,
+        desc: sortColOrder  ==1,
       };
       sortArray.push(sortObj);
       sortStr = JSON.stringify(sortArray);
@@ -151,29 +184,40 @@ export class ListBrigadesComponent implements OnInit, OnChanges {
     this.brigadeFiler.sort = sortStr;
     this.brigadeFiler.take = take;
     this.brigadeFiler.offset = offset;
+    console.log("Sort Object:", sortStr);
+    console.log("Filter Object:", this.brigadeFiler);
     this.brigadeService.getAllBrigades(this.brigadeFiler).subscribe(
       (result) => {
         this.listaBrigadeas = result.result;
         this.totalRows = result.length;
         this.loading = false;
+        console.log("valores:",this.totalRows, this.listaBrigadeas.length);
       },
       (error) => {}
     );
   }
-
-  private deleteBrigade(id: number) {
+ 
+  private deleteBrigade(id: number, brigade: BrigadeDto) {
     this.brigadeService.deleteBrigade(id).subscribe({
+      
+    
+      error: (error: HttpErrorResponse) => {
+        if (error.status !== 500) {
+         //error controlado
+        } 
+      
+      },
       complete: () => {
-        /*
         this.messageService.add({
           severity: 'success',
-          summary: '',
-          detail: 'Registro eliminado',
+          summary: 'Éxito',
+          detail: 'Registro eliminado con éxito',
           life: 3000,
         });
-        */
-      },
-      error: () => {},
+        brigade.status = 'E'
+        this.totalRows -=1;
+    
+      }
     });
   }
 }

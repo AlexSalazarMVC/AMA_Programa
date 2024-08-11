@@ -12,7 +12,12 @@ namespace FundacionAMA.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<BrigadeVoluntareer> entity)
         {
-            entity.HasKey(e => new { e.BrigadeId, e.VolunteerId });
+            //AÑADIDO 
+            entity.HasKey(e => e.Id).HasName("PK_BrigadeVolunteer");
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            //FIN AÑADIDO
+
+            //entity.HasKey(e => new { e.BrigadeId, e.VolunteerId });
 
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
             entity.Property(e => e.Status)

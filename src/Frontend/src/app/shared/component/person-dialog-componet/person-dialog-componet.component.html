@@ -1,168 +1,118 @@
-<!-- <p-panel header="Seleccione un Titular haciendo doble click"> -->
-<p-table
-  dataKey="id"
-  [lazy]="true"
-  [rows]="10"
-  class="table"
-  [paginator]="true"
-  [value]="lsPersona"
-  selectionMode="single"
-  [totalRecords]="totalRows"
-  scrollDirection="vertical"
-  [showCurrentPageReport]="true"
-  [(selection)]="selectionPerson"
-  (onLazyLoad)="loadPersonaLazy($event)"
-  currentPageReportTemplate="{last} de {totalRecords}"
->
+
+
+<div class="d-flex justify-content-between" style="margin-left: 2%; margin-bottom: 2%;">
+  <div class="d-flex">
+    <app-dropdown *ngIf="Dropdown" id="idBrigadas" class="" title="Seleccione un responsable" [dataToDialog]="lsBrigadas" [confProp]="BrigadaConfig" [filterActive]="true" [itemsProp]="itemsBrigadas" (itemChanged)="onItemChanged($event)"></app-dropdown>
+  </div>
+  <div style="margin-right: 10%;">
+    <button *ngIf="Dropdown" type="button" style="padding-left: 60%; padding-right: 60%; "class="btn btn-primary" (click)="saveSelectedPersons()">Registrar</button>
+  </div>
+</div>
+
+<p-table [value]="lsPersona" [paginator]="true" [lazy]="true" [rows]="10" (onLazyLoad)="loadPersonaLazy($event)"
+  [totalRecords]="totalRows" [showCurrentPageReport]="true" scrollDirection="vertical"
+  currentPageReportTemplate="{last} de {totalRecords}" class="table"
+  [(selection)]="selectionPerson" dataKey="id" selectionMode="single">
   <ng-template pTemplate="header" let-columns>
+    
+   
     <tr>
-      <th scope="col" [hidden]="true">Id</th>
-      <th scope="col w-min-150">
+      <th [hidden]="false" *ngIf="Dropdown"  pSortableColumn="Accion">
+
+      <input type="text" [hidden]="true" id="id"  >
+          <div class="col-12 mb-1">
+            <div class="text-center flex justify-content-center align-items-center">
+              Accion&nbsp; &nbsp;
+             
+            </div>
+          </div>
+          
+      </th>
+
+      <th pSortableColumn="DocumentoIdentidad">
         <div class="col-12 mb-1">
-          <div
-            class="text-center header flex justify-content-center align-items-center"
-          >
+          <div class="text-center flex justify-content-center align-items-center">
             Identificación&nbsp; &nbsp;
-            <p-sortIcon (click)="sortByColumns('identitySort')" field="code">
-            </p-sortIcon>
+            <p-sortIcon field="DocumentoIdentidad"></p-sortIcon>
           </div>
         </div>
-        <div
-          class="col-12 d-flex align-items-center m-0"
-          [formGroup]="filtersForm"
-        >
-          <p-columnFilter
-            field="DocumentoIdentidad"
-            type="text"
-            matchMode="contains"
-            [showMenu]="false"
-            [showClearButton]="false"
-            [showButtons]="false"
-            [showAddButton]="false"
-          >
-            <ng-template
-              pTemplate="filter"
-              let-value
-              let-filter="filterCallback"
-            >
-              <input type="text" pInputText formControlName="identity" />
-            </ng-template>
-          </p-columnFilter>
-          @if(filtersForm.get('identity')?.value){
-          <button class="button-clean" (click)="clearFilter('identity')">
-            <i
-              pTooltip="Limpiar Filtro"
-              tooltipPosition="top"
-              class="ps-2 pointer bi bi-funnel-fill"
-            ></i>
-          </button>
-          }
-        </div>
+        
       </th>
-      <th scope="col w-min-150">
+      <th pSortableColumn="Nombre">
         <div class="col-12 mb-1">
-          <div
-            class="text-center header flex justify-content-center align-items-center"
-          >
+          <div class="text-center flex justify-content-center align-items-center">
             Nombre&nbsp; &nbsp;
-            <p-sortIcon
-              (click)="sortByColumns('nameSort')"
-              field="code"
-            ></p-sortIcon>
+            <p-sortIcon field="Nombre"></p-sortIcon>
           </div>
         </div>
-        <div class="col-12 d-flex align-items-center" [formGroup]="filtersForm">
-          <p-columnFilter
-            field="Nombre"
-            matchMode="contains"
-            [showMenu]="false"
-            [showClearButton]="false"
-            [showButtons]="false"
-            [showAddButton]="false"
-          >
-            <ng-template
-              pTemplate="filter"
-              let-value
-              let-filter="filterCallback"
-            >
-              <input type="text" pInputText formControlName="name" />
-            </ng-template>
-          </p-columnFilter>
-          @if(filtersForm.get('name')?.value){
-          <button class="button-clean" (click)="clearFilter('name')">
-            <i
-              pTooltip="Limpiar Filtro"
-              tooltipPosition="top"
-              class="ps-2 pointer bi bi-funnel-fill"
-            ></i>
-          </button>
-          }
-        </div>
+       
       </th>
-      <th scope="col">
-        <div class="col-12 w-min-150 mb-1">
-          <div
-            class="text-center header flex justify-content-center align-items-center"
-          >
-            Apellido<p-sortIcon
-              (click)="sortByColumns('lastNameSort')"
-              field="code"
-            ></p-sortIcon>
-          </div>
-          <div
-            class="col-12 d-flex align-items-center"
-            [formGroup]="filtersForm"
-          >
-            <p-columnFilter
-              type="text"
-              field="Apellido"
-              matchMode="contains"
-              [showMenu]="false"
-              [showClearButton]="false"
-              [showButtons]="false"
-              [showAddButton]="false"
-            >
-              <ng-template
-                pTemplate="filter"
-                let-value
-                let-filter="filterCallback"
-              >
-                <input type="text" pInputText formControlName="lastName" />
-              </ng-template>
-            </p-columnFilter>
-            @if(filtersForm.get('lastName')?.value){
-            <button class="button-clean" (click)="clearFilter('lastName')">
-              <i
-                pTooltip="Limpiar Filtro"
-                tooltipPosition="top"
-                class="ps-2 pointer bi bi-funnel-fill"
-              ></i>
-            </button>
-            }
+      <th pSortableColumn="Apellido">
+        <div class="col-12 mb-1">
+          <div class="text-center flex justify-content-center align-items-center">
+            Apellido&nbsp; &nbsp;
+            <p-sortIcon field="Apellido"></p-sortIcon>
           </div>
         </div>
       </th>
+     
     </tr>
+   <tr>
+    <th *ngIf="Dropdown" >
+      <div class="" style="margin-top: -39px; margin-left: 52.8%;">
+       <div  field="Accion" class="" >
+          <input  class="form-check-input " type="checkbox"  id="flexCheckAll"  (change)="onAllCheckboxChange($event)" [checked]="allSelected" id="flexCheckDefault">
+        </div>
+      
+      </div>
+     </th>
+    <th >
+      <div class="col-12">
+        
+        <p-columnFilter type="text" field="DocumentoIdentidad" matchMode="contains" [showMenu]="true"
+        (paste)="onKeyDownLettersAndNumbers($event)" (keypress)="onKeyDownLettersAndNumbers($event)"
+            (input)="onInput($event)"
+        ></p-columnFilter>
+      </div>
+    </th>
+<th >
+  <div class="col-12">
+    <p-columnFilter type="text" field="Nombre" matchMode="contains" [showMenu]="true"
+      (paste)="onKeyDownLetters($event)" (keypress)="onKeyDownLetters($event)"
+      (input)="onInput($event)"></p-columnFilter>
+  </div>
+
+    </th>
+   <th>
+    <div class="col-12">
+      <p-columnFilter type="text" field="Apellido" matchMode="contains" [showMenu]="true"
+        (paste)="onKeyDownLetters($event)" (keypress)="onKeyDownLetters($event)"
+        (input)="onInput($event)"></p-columnFilter>
+    </div>
+   </th>
+    
+   </tr>
+
   </ng-template>
+  
   <ng-template pTemplate="body" let-dataPersona let-rowIndex="rowIndex">
-    <tr
-      [pSelectableRow]="dataPersona"
-      (dblclick)="onRowDblClick($event, dataPersona)"
-    >
-      <td [hidden]="true">
-        {{ dataPersona.Id }}
+    <tr [pSelectableRow]="dataPersona" 
+    (click)="Dropdown &&onRowClick( dataPersona)" 
+    (dblclick)="!Dropdown && onRowDblClick($event, dataPersona)">
+      <td *ngIf="Dropdown" >
+       <div class="d-flex justify-content-center">
+          <input class="form-check-input " type="checkbox"  id="flexCheckDefault"
+          [value]="dataPersona.id"
+          [checked]="isChecked(dataPersona)"
+            (change)="onCheckboxChange(dataPersona,$event)"
+            >
+        
+       </div>
       </td>
-      <td>
-        {{ dataPersona.identification }}
-      </td>
-      <td>
-        {{ dataPersona.firstName | uppercase }}
-        {{ dataPersona.secondName | uppercase }}
-      </td>
-      <td>
-        {{ dataPersona.lastName | uppercase }}
-        {{ dataPersona.lastName | uppercase }}
-      </td>
+      <td [hidden]="true">{{dataPersona.Id}}</td>
+      <td  >{{dataPersona.identification}}</td>
+      <td>{{dataPersona.firstName | uppercase}} {{dataPersona.secondName | uppercase}}</td>
+      <td>{{dataPersona.lastName | uppercase}} {{dataPersona.lastName | uppercase}}</td>
     </tr>
   </ng-template>
   <ng-template pTemplate="emptymessage">
@@ -171,4 +121,4 @@
     </tr>
   </ng-template>
 </p-table>
-<!-- </p-panel> -->
+

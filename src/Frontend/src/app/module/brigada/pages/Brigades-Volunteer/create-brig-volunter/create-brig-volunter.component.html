@@ -1,0 +1,47 @@
+<div class="modal-body">
+  <form [formGroup]="brigadeForm">
+    <div class="row">
+      <div class="mb-3 col">
+        <div class="mb-3 col" *ngIf="update || view">
+          <input [hidden]="true" type="text" id="idbrig" formControlName="idbrig" class="form-control" readonly />
+        </div>
+      </div>
+
+      <div class="row">
+        <div [hidden]="!update" class="mb-12 col-12">
+          <p class="form-label" for="personId">Brigada</p>
+          <app-dropdown id="idBrigadas" title="Seleccione un responsable" [dataToDialog]="lsBrigadas" [confProp]="BrigadaConfig"
+            [itemsProp]="itemsBrigadas" (itemChanged)="onItemChanged($event)" [disabledProp]="view">
+          </app-dropdown>
+        </div>
+        
+        <div class="mb-12 col-12">
+          <p class="form-label" for="personId">Voluntarios</p>
+          <app-dropdown id="personId" title="Selecciona un Brigada (⬇) [Evita añadir voluntarios q ya pertenecen a la brigada]" [dataToDialog]="lsPersona" [confProp]="personaConfig"
+            [ShowDropdown]="!update" [filterActive]="true" [itemsProp]="itemsPersona" (itemChanged)="onItemChanged($event)" [disabledProp]="view">
+          </app-dropdown>
+        </div>
+      </div>
+
+      <div class="mb-3 col">
+        <p [hidden]="true" class="form-label" for="name">ID Brigada</p>
+        <input [hidden]="true" type="text" id="id" formControlName="id" class="form-control" [readonly]="view" />
+        <app-error-display [control]="brigadeForm.get('id')" [minLength]="3" [maxLength]="10"></app-error-display>
+      </div>
+      <div class="mb-3 col">
+        <p [hidden]="true" class="form-label" for="persona">ID Voluntario</p>
+        <input [hidden]="true" type="text" id="personId" formControlName="personId" class="form-control" [readonly]="view" />
+        <app-error-display [control]="brigadeForm.get('idPersona')" [minLength]="3" [maxLength]="10"></app-error-display>
+      </div>
+
+
+      <div class="mb-3 row" style="margin-top: 5%;">
+        <div [hidden]="!update" class="col">
+          <button type="submit" style="margin-left: 38%; margin-top: 50%;" (click)="Createbrigade()" class="btn btn-primary col-sm-3 mx-6 my-4 d-flex justify-content-center">
+            {{ label }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

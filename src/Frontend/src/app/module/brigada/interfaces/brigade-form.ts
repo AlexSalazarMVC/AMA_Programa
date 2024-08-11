@@ -8,4 +8,5 @@ export interface BrigadeForm {
     identificationPerson?:string;
     nameCompletedPerson?:string;
     id?: number;
+    brigadeId?: number;
 }

@@ -21,6 +21,7 @@
       <tr *ngIf="brigade?.status !== 'E'">
         <td>{{ brigade.id }}</td>
         <td>{{ brigade.name }}</td>
+       
         <td>{{ brigade.start | date:'dd/MM/yyyy' }}</td>
         <td>{{ brigade.end | date:'dd/MM/yyyy'}}</td>
         <td style="text-align: center">

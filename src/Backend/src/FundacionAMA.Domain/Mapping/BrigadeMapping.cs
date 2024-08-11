@@ -14,6 +14,8 @@ namespace FundacionAMA.Domain.Mapping
                 .ForMember(dest => dest.NameCompletedPerson, opt => opt.MapFrom(src => src.Person.NameCompleted))
                 .IgnoreIfEmpty();
             CreateMap<BrigadeRequest, BrigadeDto>().IgnoreIfEmpty();
+
+            
         }
     }
 }

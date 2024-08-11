@@ -1,52 +1,44 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
-import {
-  DynamicDataToDialog,
-  ConfigurationDropdownProp,
-  ItemDropdown,
-  ChangeItemDropdown,
-} from '../../../core/interfaces/ItemDropdown.models';
+import { DynamicDataToDialog, ConfigurationDropdownProp, ItemDropdown, ChangeItemDropdown } from '../../../core/interfaces/ItemDropdown.models';
 import { DataSetComponentService } from '../../../data/datasetcomponet.service';
 import { throws } from 'assert';
+import { truncate } from 'fs';
 
 @Component({
   selector: 'app-dropdown',
 
   templateUrl: './dropdown-component.component.html',
-  styleUrl: './dropdown-component.component.sass',
+  styleUrl: './dropdown-component.component.sass'
 })
 export class DropdownComponent implements OnDestroy, OnChanges {
   @Input() dataToDialog!: DynamicDataToDialog;
   @Input() className!: string;
-  @Input() title?: string;
+  @Input() title?:string
   @Input() confProp!: ConfigurationDropdownProp;
   @Input() itemsProp!: ItemDropdown[];
   @Input() disabledProp: boolean = false;
   @Output() itemChanged = new EventEmitter<ChangeItemDropdown>();
-
+  @Input() filterActive: boolean = false;
+  @Input() ShowDropdown: boolean = false;
   items: ItemDropdown[] = [];
   ref!: DynamicDialogRef;
   formItemDropdownGroup: FormGroup;
-  disabledPropControl: boolean = false;
-  classButtonControl: string = '';
+  disabledPropControl : boolean = false;
+  classButtonControl : string = "";
+  filterVolunteers: boolean = false; 
+  showDropdown: boolean=false; 
+  constructor(public dialogService: DialogService
+    , private datasetComponentService: DataSetComponentService)  {
 
-  constructor(
-    public dialogService: DialogService,
-    private datasetComponentService: DataSetComponentService
-  ) {
+     
+
+
     this.items = [];
     this.disabledPropControl = this.disabledProp;
+    this.updateClassButtonControl();
     // if (this.disabledPropControl) {
     //   this.classButtonControl = "width: 50px; height:40px; color: white; background-color: rgb(122, 116, 182); position: absolute; right: 0";
     // } else {
@@ -54,41 +46,63 @@ export class DropdownComponent implements OnDestroy, OnChanges {
     // }
 
     if (this.disabledPropControl) {
-      this.classButtonControl =
-        'background-color: rgb(122, 116, 182); position: absolute; right: 0px;';
+      this.classButtonControl = "background-color: rgb(122, 116, 182); position: absolute; right: 0px;";
     } else {
-      this.classButtonControl =
-        'background-color: rgb(34, 25, 135); position: absolute; right: 0px;';
+      this.classButtonControl = "background-color: rgb(34, 25, 135); position: absolute; right: 0px;";
     }
 
+
     this.formItemDropdownGroup = new FormGroup({
-      itemFormControl: new FormControl({
-        value: null,
-        disabled: this.disabledProp,
-      }),
+      itemFormControl: new FormControl({value : null , disabled : this.disabledProp},Validators.required)
     });
   }
+  private updateClassButtonControl() {
+    if (this.disabledPropControl) {
+       this.classButtonControl = "background-color: rgb(122, 116, 182); position: absolute; right: 0px;";
+    } else {
+       this.classButtonControl = "background-color: rgb(34, 25, 135); position: absolute; right: 0px;";
+    }
+ }
   ngOnChanges(changes: SimpleChanges): void {
     for (let propName in changes) {
       if (propName === 'itemsProp') {
         this.items = changes[propName].currentValue;
         if (this.items.length > 0) {
-          this.formItemDropdownGroup
-            .get('itemFormControl')
-            ?.patchValue(this.items[0].code);
+          this.formItemDropdownGroup.get("itemFormControl")?.patchValue(this.items[0].code);
         } else {
-          this.formItemDropdownGroup.get('itemFormControl')?.patchValue(null);
+          this.formItemDropdownGroup.get("itemFormControl")?.patchValue(null);
         }
       }
       if (propName === 'disabledProp') {
         this.disabledProp = changes[propName].currentValue;
         if (this.disabledProp) {
-          this.formItemDropdownGroup.get('itemFormControl')?.disable();
+          this.formItemDropdownGroup.get("itemFormControl")?.disable();
         } else {
-          this.formItemDropdownGroup.get('itemFormControl')?.enable();
+          this.formItemDropdownGroup.get("itemFormControl")?.enable();
         }
         this.disabledPropControl = this.disabledProp;
       }
+      if (propName === 'filterActive') {
+        // Aquí puedes agregar la lógica específica para activar el filtro si `filterActive` está en true
+        if (this.items.length > 0) {
+          this.formItemDropdownGroup.get("itemFormControl")?.patchValue(this.items[0].code);
+        } else {
+          this.formItemDropdownGroup.get("itemFormControl")?.patchValue(null);
+        }
+        this.filterVolunteers =true;
+      }
+      if (propName === 'ShowDropdown') {
+        // Aquí puedes agregar la lógica específica para activar el filtro si `filterActive` está en true
+       
+        this.showDropdown = changes[propName].currentValue;
+        console.log("bool:", this.showDropdown);
+        if (this.showDropdown ) {
+          this.showDropdown=true;
+        } else {
+          this.showDropdown=false;
+        }
+      }
+
     }
   }
 
@@ -105,57 +119,50 @@ export class DropdownComponent implements OnDestroy, OnChanges {
     }
   }
 
-  clearItems() {
+  clearItems(){
     this.clearItemsProcess();
   }
 
   // Private Functions
-  private openDialogProcess() {
-    this.ref = this.dialogService.open(
-      this.datasetComponentService.get(this.confProp.NameComponent),
-      {
-        width: this.confProp.width ?? 'auto',
-        height: this.confProp.height ?? 'auto',
-        header: this.title,
-        style: { 'max-height': '90%', 'max-width': '90%' },
-        data: {
-          dataToDialogArr: this.dataToDialog.Params,
-          dataFilter: this.dataToDialog.dataFilter,
-        },
-      }
-    );
+  private openDialogProcess(){
+        this.ref = this.dialogService.open(this.datasetComponentService.get(this.confProp.NameComponent), {
+          width: this.confProp.width ?? 'auto',
+          height: this.confProp.height?? 'auto',
+          header: this.title,
+          contentStyle: { 'min-height': '500px', 'min-width': '500px' },
+          // contentStyle: {"overflow": "auto"},
+          data: {dropdown: this.showDropdown, filterVolunteers:this.filterVolunteers ,dataToDialogArr: this.dataToDialog.Params,dataFilter: this.dataToDialog.dataFilter}
+        });
 
-    this.ref.onClose.subscribe((itemSel: ItemDropdown) => {
-      if (itemSel) {
-        this.items = [];
-        itemSel.description = itemSel.description?.toUpperCase();
-        this.items.push(itemSel);
-        this.formItemDropdownGroup
-          .get('itemFormControl')
-          ?.patchValue(itemSel.code);
-        // Emit new values to parent
-        let _conf: ConfigurationDropdownProp = {
-          Id: this.confProp.Id,
-          Name: this.confProp.Name,
-          Tooltip: this.confProp.Tooltip,
-          NameComponent: this.confProp.NameComponent,
-          Dataset: this.confProp.Dataset,
-        };
-        let _data: ItemDropdown = {
-          code: itemSel.code,
-          description: itemSel.description,
-          dataSerialize: itemSel.dataSerialize,
-        };
-        let _itemChanged: ChangeItemDropdown = {
-          conf: _conf,
-          data: _data,
-        };
-        this.itemChanged.emit(_itemChanged);
-      }
-    });
+      this.ref.onClose.subscribe((itemSel: ItemDropdown) => {
+          if (itemSel) {
+            this.items = [];
+            itemSel.description = itemSel.description?.toUpperCase();
+            this.items.push(itemSel);
+            this.formItemDropdownGroup.get("itemFormControl")?.patchValue(itemSel.code);
+            // Emit new values to parent
+            let _conf: ConfigurationDropdownProp = {
+              Id: this.confProp.Id,
+              Name: this.confProp.Name,
+              Tooltip: this.confProp.Tooltip,
+              NameComponent: this.confProp.NameComponent,
+              Dataset: this.confProp.Dataset
+            }
+            let _data: ItemDropdown = {
+              code: itemSel.code,
+              description: itemSel.description,
+              dataSerialize: itemSel.dataSerialize
+            };
+            let _itemChanged: ChangeItemDropdown = {
+              conf: _conf,
+              data: _data
+            };
+            this.itemChanged.emit(_itemChanged);
+
+          }
+      });
   }
-
-  private clearItemsProcess() {
+  private clearItemsProcess(){
     // Clear List of Items
     this.items = [];
 
@@ -165,16 +172,16 @@ export class DropdownComponent implements OnDestroy, OnChanges {
       Name: this.confProp.Name,
       Tooltip: this.confProp.Tooltip,
       NameComponent: this.confProp.NameComponent,
-      Dataset: this.confProp.Dataset,
-    };
+      Dataset: this.confProp.Dataset
+    }
     let _data: ItemDropdown = {
-      code: '',
-      description: '',
-      dataSerialize: '',
+      code:'',
+      description:'',
+      dataSerialize: ''
     };
     let _itemChanged: ChangeItemDropdown = {
       conf: _conf,
-      data: _data,
+      data: _data
     };
     this.itemChanged.emit(_itemChanged);
   }

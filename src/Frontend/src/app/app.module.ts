@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRouteModule } from './app.routes';
 import { AppComponent } from './app.component';
@@ -21,6 +21,7 @@ import { SharedModule } from './shared/shared.module';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpErrorInterceptorService } from './shared/services/http-error-interceptor.service';
 import { HttpJwtInterceptorService } from './shared/services/http-jwt-interceptor.service';
+import { ServiceWorkerModule } from '@angular/service-worker';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -35,6 +36,12 @@ import { HttpJwtInterceptorService } from './shared/services/http-jwt-intercepto
     SharedModule,
     ReactiveFormsModule,
     CommonModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
   ],
   providers: [   MessageService,
     {

@@ -9,7 +9,7 @@
 
   <form [formGroup]="beneficiarioForm" class="container-fluid">
     <div class="d-flex flex-wrap">
-      <div class="form-group flex-fill col-sm-12 col-md-6" *ngIf="update || view">
+      <div class="form-group flex-fill col-6" *ngIf="update || view">
         <label for="idPerson">N° Beneficiario</label>
         <input
           type="text"
@@ -20,8 +20,10 @@
         />
       </div>
 
-      <div class="form-group flex-fill col-sm-12 col-md-6">
-        <label for="identificationTypeId">Tipo Identificación</label>
+      <div class="form-group flex-fill col-6" *ngIf="update || view"></div>
+
+      <div class="form-group flex-fill col-6">
+        <label for="identificationTypeId">Tipo Indentificación</label>
         <select
           id="identificationTypeId"
           formControlName="identificationTypeId"
@@ -41,100 +43,90 @@
         ></app-error-display>
       </div>
 
-      <div class="form-group flex-fill col-sm-12 col-md-6">
+      <div class="form-group flex-fill col-6">
         <label for="identification">Identificación</label>
         <input
           type="text"
           id="identification"
           formControlName="identification"
-          minLength="10"
-          maxLength="10"
+          [maxLength]="10"
           class="form-control"
           [attr.readonly]="view ? true : null"
         />
         <app-error-display
           [control]="beneficiarioForm.get('identification')"
-          [minLength]="10"
+          [minLength]="3"
           [maxLength]="10"
-          [pattern]="'números'"
         ></app-error-display>
       </div>
 
-      <div class="form-group flex-fill col-sm-12 col-md-6">
+      <div class="form-group flex-fill col-6">
         <label for="firstName">Primer Nombre</label>
         <input
           type="text"
           id="firstName"
           formControlName="firstName"
           class="form-control"
-          maxlength="20"
           [attr.readonly]="view ? true : null"
           required="*"
         />
         <app-error-display
           [control]="beneficiarioForm.get('firstName')"
-          [minLength]="1"
-          [maxLength]="20"
-          [pattern]="'caracteres'"
+          [minLength]="3"
+          [maxLength]="10"
         ></app-error-display>
       </div>
 
-      <div class="form-group flex-fill col-sm-12 col-md-6">
+      <div class="form-group flex-fill col-6">
         <label for="secondName">Segundo Nombre</label>
         <input
           type="text"
           id="secondName"
           formControlName="secondName"
           class="form-control"
-          maxlength="20"
           [attr.readonly]="view ? true : null"
         />
         <app-error-display
           [control]="beneficiarioForm.get('secondName')"
           [minLength]="3"
-          [maxLength]="20"
-          [pattern]="'caracteres'"
+          [maxLength]="10"
         ></app-error-display>
       </div>
 
-      <div class="form-group flex-fill col-sm-12 col-md-6">
+      <div class="form-group flex-fill col-6">
         <label for="lastName">Primer Apellido</label>
         <input
           type="text"
           id="lastName"
           formControlName="lastName"
           class="form-control"
-          maxlength="20"
           [attr.readonly]="view ? true : null"
         />
         <app-error-display
           [control]="beneficiarioForm.get('lastName')"
           [minLength]="3"
-          [maxLength]="20"
-          [pattern]="'caracteres'"
+          [maxLength]="10"
         ></app-error-display>
       </div>
 
-      <div class="form-group flex-fill col-sm-12 col-md-6">
+      <div class="form-group flex-fill col-6">
         <label for="secondLastName">Segundo Apellido</label>
         <input
           type="text"
           id="secondLastName"
           formControlName="secondLastName"
           class="form-control"
-          maxlength="20"
           [attr.readonly]="view ? true : null"
         />
         <app-error-display
           [control]="beneficiarioForm.get('secondLastName')"
           [minLength]="3"
-          [maxLength]="20"
-          [pattern]="'caracteres'"
+          [maxLength]="10"
         ></app-error-display>
       </div>
 
-      <div class="form-group flex-fill col-sm-12 col-md-6">
-        <label for="email">Correo electrónico</label>
+      <div class="form-group flex-fill col-6">
+        <label for="email">Correo electónico</label>
         <input
           type="email"
           id="email"
@@ -144,11 +136,12 @@
         />
         <app-error-display
           [control]="beneficiarioForm.get('email')"
-          [pattern]="'un email'"
+          [minLength]="3"
+          [maxLength]="10"
         ></app-error-display>
       </div>
 
-      <div class="form-group flex-fill col-sm-12 col-md-6">
+      <div class="form-group flex-fill col-6">
         <label for="phone">Teléfono</label>
         <input
           type="text"
@@ -160,25 +153,25 @@
         />
         <app-error-display
           [control]="beneficiarioForm.get('phone')"
-          [minLength]="10"
+          [minLength]="9"
           [pattern]="'números'"
           [maxLength]="10"
         ></app-error-display>
       </div>
 
-      <div class="form-group flex-fill col-sm-12 col-md-6">
+      <div class="form-group flex-fill col-12">
         <label for="description">Descripción</label>
         <input
           type="text"
           id="description"
           formControlName="description"
           class="form-control"
-          maxlength="200"
           [attr.readonly]="view ? true : null"
         />
         <app-error-display
           [control]="beneficiarioForm.get('description')"
-          [pattern]="'caracteres y numeros'"
+          [minLength]="9"
+          [pattern]="'números'"
           [maxLength]="10"
         ></app-error-display>
       </div>

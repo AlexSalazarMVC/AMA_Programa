@@ -12,11 +12,15 @@
       [showClear]="true"
       [readonly]="true"
       dropdownIcon="none"
+     
       (onClear)="clearItems();">
     </p-dropdown>
 
     <button type="button" pButton [disabled]="disabledPropControl" [style]="classButtonControl" class="btn btn-info btn-search-control">
       <i class="pi pi-search"></i>
     </button>
+    
 </div>
-
+<app-error-display [control]="formItemDropdownGroup.get('itemFormControl')"
+    [minLength]="3"
+    [maxLength]="10"></app-error-display>

@@ -9,6 +9,7 @@ import { DialogService } from 'primeng/dynamicdialog';
   templateUrl: './beneficiario-index.component.html',
   styleUrl: './beneficiario-index.component.sass',
 })
+
 export class beneficiarioIndexComponent {
   isUpdateListDetails: boolean = false;
   openFilterPanel: boolean = false;
@@ -24,9 +25,10 @@ export class beneficiarioIndexComponent {
     this.dialogService
       .open(beneficiarioCreateOrEditComponent, {
         header: 'Crear beneficiario',
-        width: '85%',
-        height: 'auto',
+        width: '50%',
+        height: '90%',
         data: { update: false },
+        contentStyle: { 'max-height': '550px', overflow: 'auto' },
         baseZIndex: 10000,
       })
       .onClose.subscribe((result) => {
@@ -55,6 +57,9 @@ export class beneficiarioIndexComponent {
 
     if (Object.keys(beneficiarioFilter).length !== 0) {
       beneficiarioFilter = { ...beneficiarioFilter, offset: 0, take: 10 };
+
+      // console.log(beneficiarioFilter);
+
       this.beneficiarioService
         //@ts-ignore
         .getAllbeneficiarios(beneficiarioFilter)

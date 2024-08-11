@@ -6,7 +6,7 @@
   <div class="modal-body">
       <form [formGroup]="brigadeForm">
           <div class="row">
-            <div class="mb-3 col-sm-12 col-md-auto" *ngIf="update">
+            <div class="mb-3 col-auto" *ngIf="update">
               <label for="iddonation">N° Brigada</label>
               <input type="text" id="Id" formControlName="id" class="form-control" readonly />
             </div>
@@ -21,9 +21,10 @@
           <div class="row">
             <div class="mb-3 col">
               <p class="form-label" for="personId">Responsable</p>
-              <app-dropdown id="personId" title="Seleccione un responsable" id="idPersona" [dataToDialog]="lsPersona" [confProp]="personaConfig"
+              <app-dropdown  title="Seleccione un responsable" id="personId" [dataToDialog]="lsPersona" [confProp]="personaConfig"
                 [itemsProp]="itemsPersona" (itemChanged)="onItemChanged($event)" [disabledProp]="view">
               </app-dropdown>
+            
             </div>
           </div>
 
@@ -35,10 +36,10 @@
             </div>
           </div>
             <div class="row">
-            <div class="mb-3 col-sm-12 col-md-6">
-              <div id="form-calendario" class="form-group me-md-5 mt-5">
+            <div class="mb-3 col" id="divcl">
+              <div id="form-calendario"class="form-group">
                 <label for="start">Fecha Inicio</label>
-                <div class="calendar-container">
+             
                   <div class="calendar-container">
                     <p-calendar *ngIf="!view" placeholder="Seleccione la fecha Inicial" id="start"
                       formControlName="start" [showIcon]="true" class="modal-calendar p-input-size d-flex"></p-calendar>
@@ -48,11 +49,11 @@
                       [disabled]="view" class="p-input-date h-100" />
                     <button pButton type="button" icon="pi pi-calendar" class="p-button-rounded h-100"></button>
                   </div>
-                </div>
+             
               </div>
             </div>
-            <div class="mb-3 col-sm-12 col-md-6">
-              <div id="form-calendario" class="form-group ms-md-5 mt-5">
+            <div class="mb-3 col">
+              <div id="form-calendario" class="form-group">
                 <label for="end">Fecha Fin</label>
                 <div class="calendar-container" *ngIf="!view">
                   <p-calendar placeholder="Seleccione la fecha Fin" id="end" formControlName="end" [showIcon]="true"

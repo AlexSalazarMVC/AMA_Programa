@@ -3,15 +3,11 @@ using FundacionAMA.Application.Services.DonationApp;
 using FundacionAMA.Domain.DTO.Donation.Dto;
 using FundacionAMA.Domain.DTO.Donation.Filter;
 using FundacionAMA.Domain.DTO.Donation.Request;
-using FundacionAMA.Domain.DTO.Volunteer.Dto;
-using FundacionAMA.Domain.DTO.Volunteer.Filter;
 using FundacionAMA.Domain.Interfaces.Controller.Donation;
-using FundacionAMA.Domain.Shared.Entities.Operation;
 using FundacionAMA.Domain.Shared.Extensions.Bussines;
 using FundacionAMA.Domain.Shared.Interfaces.Operations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace FundacionAMA.API.Controllers.Donation
 {
@@ -135,9 +131,7 @@ namespace FundacionAMA.API.Controllers.Donation
         {
             try
             {
-                IOperationResultList<DonationDto> Result = await _service.GetAll(new DonationFilter());
-                //var count = await _service.GetCount();
-                var count = new OperationResult<int>(HttpStatusCode.OK, result: Result.Result.Count());
+                var count = await _service.GetCount();
                 return Ok(count);
             }
             catch (Exception ex)

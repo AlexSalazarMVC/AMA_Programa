@@ -1,0 +1,60 @@
+<div class="modal-body">
+    <form [formGroup]="brigadeForm">
+      <div class="row">
+        <div class="mb-3 col-auto" >
+          <label [hidden]="true"  for="id">ID</label>
+          <input [hidden]="true" type="text" id="id" formControlName="id" class="form-control" readonly />
+        </div>
+        <div class="mb-3  col-auto" >
+        <label for="id">ID Brigada</label>
+        <input type="text" id="brigadeid" formControlName="brigadeid" class="form-control " readonly />
+      </div>
+      <div class="mb-3 col-auto" >
+      <label for="id">ID Voluntario</label>
+      <input type="text" id="idvoluntario" formControlName="idvoluntario" class="form-control" readonly />
+    </div>
+  
+
+    <div class="mb-3 col-auto" >
+        <div class="mb-3 col">
+          <p class="form-label" for="name">Nombre de la Brigada</p>
+          <input type="text" id="nombrebrig" formControlName="nombrebrig" class="form-control" readonly />
+ 
+        </div>
+      
+    </div>
+  </div>
+  <div class="row">
+      <div class="mb-3 col-auto" >
+      <div class="mb-3 col">
+        <p class="form-label" for="name">Nombre del Voluntario</p>
+        <input type="text" id="nombrevolun" formControlName="nombrevolun" class="form-control" readonly />
+
+      </div>
+    </div>
+
+
+    
+        <div class="mb-3 col-auto" >
+        <div class="mb-3 col">
+          <p class="form-label" for="">Responsable</p>
+          <input type="text" id="responbrigada" formControlName="responbrigada" class="form-control">
+         
+        </div>
+      </div>
+
+    </div>
+   
+      
+   
+    <div class="mb-3 col-auto" >
+        <div class="mb-3 col">
+          <p class="form-label" for="description">Descripción</p>
+          <textarea rows="3"  id="descripcion" formControlName="descripcion"
+            class="form-control" [readonly]="view"></textarea>
+        </div>
+      </div>
+   
+    </form>
+  </div>
+  

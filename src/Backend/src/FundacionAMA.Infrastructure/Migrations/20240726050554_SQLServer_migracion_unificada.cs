@@ -488,6 +488,11 @@ namespace FundacionAMA.Infrastructure.Migrations
                 name: "BrigadeVoluntareers",
                 columns: table => new
                 {
+                    //agregado
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    //fin agregado
+
                     BrigadeId = table.Column<int>(type: "int", nullable: false),
                     VolunteerId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValueSql: "(N'')"),
@@ -499,7 +504,10 @@ namespace FundacionAMA.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BrigadeVoluntareers", x => new { x.BrigadeId, x.VolunteerId });
+                    //agregado
+                    table.PrimaryKey("PK_BrigadeVoluntareers", x => x.Id);
+                    //fin agregado
+                    //table.PrimaryKey("PK_BrigadeVoluntareers", x => new { x.BrigadeId, x.VolunteerId });
                     table.ForeignKey(
                         name: "FK_BrigadeVoluntareers_Brigades",
                         column: x => x.BrigadeId,
@@ -560,6 +568,12 @@ namespace FundacionAMA.Infrastructure.Migrations
                 name: "IX_Brigades_CompanyId",
                 table: "Brigades",
                 column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Brigades_Name",
+                table: "Brigades",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Brigades_PersonId",

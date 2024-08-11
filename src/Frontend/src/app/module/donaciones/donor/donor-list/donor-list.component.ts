@@ -28,6 +28,7 @@ import {
 export class DonorListComponent implements OnInit, OnChanges {
   @Input() isUpdateListDetails: boolean = false;
 
+  
   EditData(PersonDto: any) {
     this.NavigateUpdate(PersonDto);
   }
@@ -40,7 +41,7 @@ export class DonorListComponent implements OnInit, OnChanges {
   donorList: any[] = [];
   donorListFiltered: any[] = [];
   donanteSeleccionado: any;
-
+  
   numeroDeClicks = 0;
 
   constructor(
@@ -59,8 +60,8 @@ export class DonorListComponent implements OnInit, OnChanges {
   Cargar_datos(): void{
     this.getPerson();
 
-    this.donorService.getDonorList().subscribe({
-      next: (response) => {
+    this.donorService.getDonorList().subscribe(
+      (response) => {
         this.donorList = response.result;
         this.filterService.filtro$.subscribe((filtros) => {
           this.aplicarFiltros(filtros);
@@ -68,13 +69,14 @@ export class DonorListComponent implements OnInit, OnChanges {
 
         this.aplicarFiltros({ nombreFiltro: '', numeroFiltro: null });
       },
-      error: (error) => {
+      (error) => {
         console.error('Error al obtener datos:', error);
-      },
-    });
-  }
+      }
+    );
+  } 
+
   handleUpdateListDetails() {
-    this.getPerson();
+    this.getPerson(); 
   }
   ngOnChanges(changes: SimpleChanges): void {
     for (let change in changes) {
@@ -90,21 +92,21 @@ export class DonorListComponent implements OnInit, OnChanges {
       sort: '',
     };
 
-    this.personService.getAllPersons(this.personFiler).subscribe({
-      next: (result) => {
+    this.personService.getAllPersons(this.personFiler).subscribe(
+      (result) => {
         this.listaPersonas = result.result;
         this.totalRows = result.length;
         this.loading = false;
       },
-      error: (error) => {},
-    });
+      (error) => {}
+    );
   }
   NavigateUpdate(personDto: PersonDto) {
     this.dialogService
       .open(PersonCreateOrEditComponent, {
         header: 'Crear Donante',
-        width: '85%',
-        height: 'auto',
+        width: '75%',
+        height: '85%',
         data: { update: true, person: personDto },
         contentStyle: { 'max-height': '500px', overflow: 'auto' },
         baseZIndex: 10000,
@@ -134,14 +136,14 @@ export class DonorListComponent implements OnInit, OnChanges {
     this.personFiler.sort = sortStr;
     this.personFiler.take = take;
     this.personFiler.offset = offset;
-    this.personService.getAllPersons(this.personFiler).subscribe({
-      next: (result) => {
+    this.personService.getAllPersons(this.personFiler).subscribe(
+      (result) => {
         this.listaPersonas = result.result;
         this.totalRows = result.length;
         this.loading = false;
       },
-      error: (error) => {},
-    });
+      (error) => {}
+    );
   }
 
   aplicarFiltros(filtros: any) {
@@ -167,8 +169,8 @@ export class DonorListComponent implements OnInit, OnChanges {
   }
 
   private eliminarDonante(id: number) {
-    this.donorService.deleteDonor(id).subscribe({
-      next: (result) => {
+    this.donorService.deleteDonor(id).subscribe(
+      (result) => {
         //this.getPerson();
         this.Cargar_datos();
         this.messageService.add({
@@ -177,38 +179,43 @@ export class DonorListComponent implements OnInit, OnChanges {
           detail: 'Donante eliminado exitosamente',
         });
       },
-      error: (error) => {
+      (error) => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Error al eliminar el donante',
         });
-      },
-    });
+      }
+    );
   }
 
-  confirmacionEliminar(event: Event, donor: any) {
+  confirmacionEliminar(event: Event,donor: any) {
     this.numeroDeClicks++;
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: '¿Desea eliminar este registro?',
-      header: 'Confirmación de Eliminación',
+      header: 'Confirmación de Eliminación', 
       icon: 'pi pi-info-circle',
       acceptButtonStyleClass: 'p-button-danger p-button-text',
       rejectButtonStyleClass: 'p-button-text p-button-text',
       acceptIcon: 'none',
       rejectIcon: 'none',
       accept: () => {
+
        this.totalRows -= 1;
        this.eliminarDonante(donor.personId);
       },
       reject: () => {
+       
+
         this.messageService.add({
           severity: 'error',
           summary: 'Rechazado',
-          detail: 'Eliminación Cancelada',
+          detail: 'Eliminacion Cancelada',
         });
       },
     });
   }
+  
+
 }

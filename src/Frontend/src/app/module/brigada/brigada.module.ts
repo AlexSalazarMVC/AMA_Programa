@@ -10,8 +10,9 @@ import { CreateOrEditBrigadesComponent } from './pages/create-or-edit-brigades/c
 import { ListBrigadesComponent } from './pages/list-brigades/list-brigades.component';
 import { FilterBrigadesComponent } from './pages/filter-brigades/filter-brigades.component';
 import { BrigadeService } from './services/brigade.service';
-
-
+import { BrigadesVolunteerComponent } from './pages/Brigades-Volunteer/brigades-volunteer.component';
+import { ListBrigadesVlComponent } from './pages/Brigades-Volunteer/list-brigades-vl/list-brigades-vl.component'; 
+import { FilterBrigadesVolunteerComponent } from './pages/Brigades-Volunteer/filter-brigades-volunteer/filter-brigades-volunteer.component'; 
 @NgModule({
   declarations: [
     IndexBrigadesComponent,
@@ -19,6 +20,9 @@ import { BrigadeService } from './services/brigade.service';
     FilterBrigadesComponent,
     ListBrigadesComponent,
     CreateOrEditBrigadesComponent,
+    BrigadesVolunteerComponent,
+    ListBrigadesVlComponent,
+    FilterBrigadesVolunteerComponent,
   ],
   imports: [
  

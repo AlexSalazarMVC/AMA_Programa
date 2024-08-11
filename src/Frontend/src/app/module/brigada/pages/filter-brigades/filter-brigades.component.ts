@@ -10,6 +10,7 @@ import { FormGroup } from '@angular/forms';
 import { FormService } from '../../../../shared/services/from.service';
 import { BrigadeFilter } from '../../models/brigada-filter.interface';
 import { ChangeItemDropdown, ConfigurationDropdownProp, DynamicDataToDialog, ItemDropdown } from '../../../../core/interfaces/ItemDropdown.models';
+import { volunteer } from '../../../../models/Volunteer/Volunteer';
 
 @Component({
   selector: 'app-filter-brigades',
@@ -28,6 +29,7 @@ onItemChanged(eventData: ChangeItemDropdown) {
 
 }
   @Output() queryEmitter = new EventEmitter<BrigadeFilter>();
+
   @Input() openContentReceiver: boolean =false;
 
   IsOpen: boolean = false;
@@ -55,8 +57,9 @@ onItemChanged(eventData: ChangeItemDropdown) {
 
   Buscar() {
     this.queryEmitter.emit(this.formFilterConsult.value);
+    console.log(this.formFilterConsult.value);
   }
-
+  
   clearFiltersEvent() {
     if (this.formFilterConsult) {
         this.formFilterConsult.reset();

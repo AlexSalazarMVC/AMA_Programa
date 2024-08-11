@@ -14,6 +14,7 @@ export class ErrorDisplayComponent {
   @Input() maxLength: number | undefined;
   @Input() isNumeric: boolean | undefined;
   @Input() pattern: string | undefined;
+  @Input() Lista: string | undefined;
 
   getErrors(): { [key: string]: string } {
     const errors: ValidationErrors | null = this.control?.errors;
@@ -23,7 +24,7 @@ export class ErrorDisplayComponent {
       maxlength: this.maxLength ? `El valor debe tener como máximo ${this.maxLength} caracteres` : 'El valor es demasiado largo',
       pattern: this.pattern ? `El valor debe contener solo ${this.pattern}`:   'El valor del campo no es correcto',
       email:   'El campo debe ser de formato email',
-     
+     Lista: 'Valore nulo',
   
     };
 
